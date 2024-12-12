@@ -1,5 +1,0 @@
-server.port: 9999
-tripactions:
-  server:
-    timeoutInSecs: 10
-    baseUrl: http://localhost:8080

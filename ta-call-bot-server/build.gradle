@@ -1,5 +1,0 @@
-dependencies {
-    api project(':spring-starter')
-}
-
-description = 'Backend Baseline Service Server'

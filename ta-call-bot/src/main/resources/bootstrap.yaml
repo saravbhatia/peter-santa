@@ -1,7 +1,0 @@
-spring:
-  application:
-    name: "ta-call-bot"
-
-aws:
-  paramstore:
-    enabled: false

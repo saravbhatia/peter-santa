@@ -1,8 +1,0 @@
-spring:
-  liquibase:
-    enabled: false
-
-kafka:
-  enabled: true
-  schema-registry: "http://dev-schema-registry-b.tripactions.tools:8081,http://dev-schema-registry-a.tripactions.tools:8081"
-  bootstrap-servers: "http://localhost:9092, http://localhost:29092"
