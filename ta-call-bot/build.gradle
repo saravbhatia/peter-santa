@@ -1,0 +1,41 @@
+plugins {
+
+    id 'org.springframework.boot' version '3.2.5'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+dependencies {
+    api project(':spring-starter')
+    runtimeOnly project(':ta-call-bot-server')
+    implementation ('com.tripactions:navan-common-web') {
+        exclude module: 'spring-web'
+    }
+
+    implementation 'com.newrelic.telemetry:micrometer-registry-new-relic'
+    runtimeOnly 'io.awspring.cloud:spring-cloud-starter-aws-parameter-store-config'
+    runtimeOnly 'org.springframework.boot:spring-boot-starter-validation'
+    runtimeOnly 'org.springframework.cloud:spring-cloud-context'
+    runtimeOnly 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+}
+
+
+bootJar {
+    mainClass.set('com.tripactions.taCallBot.Application')
+    archiveBaseName.set('ta-call-bot')
+    enabled = true
+}
+
+jar {
+    enabled = false
+}
+
+bootRun {
+    String activeProfile = System.properties['spring.profiles.active']
+    systemProperty "spring.profiles.active", activeProfile
+}
+

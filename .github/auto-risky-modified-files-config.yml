@@ -1,0 +1,4 @@
+version: 1
+labels:
+  - label: 'auto-risky'
+    size-above: 1

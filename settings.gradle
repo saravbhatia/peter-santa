@@ -1,0 +1,21 @@
+rootProject.name = 'ta-call-bot'
+
+include 'ta-call-bot'
+include 'ta-call-bot-server'
+include 'ta-call-bot-client'
+
+include 'spring-starter'
+include 'kafka'
+include 'redis'
+include 'mysql'
+
+include 'java-platform-plugin'
+
+project(':spring-starter').projectDir = "$rootDir/spring-starter" as File
+project(':ta-call-bot').projectDir = "$rootDir/ta-call-bot" as File
+project(':ta-call-bot-client').projectDir = "$rootDir/ta-call-bot-client" as File
+project(':kafka').projectDir = "$rootDir/infra/kafka" as File
+project(':redis').projectDir = "$rootDir/infra/redis" as File
+project(':mysql').projectDir = "$rootDir/infra/mysql" as File
+
+

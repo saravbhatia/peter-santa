@@ -1,0 +1,29 @@
+name: "risky-pr-labeler using Labeler"
+on: [ pull_request ]
+
+jobs:
+  label:
+    runs-on: self-hosted
+    steps:
+      - uses: srvaroa/labeler@v1.6.3
+        with:
+          config_path: .github/labeler_config.yml
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Count updated files
+        id: count-files
+        run: |
+          echo "repo: ${{ github.repository }}"
+          CHANGED_FILES=$(curl -s -H "Authorization: token  ${{ secrets.GITHUB_TOKEN }}" -X GET ${{ github.api_url }}/repos/${{ github.repository }}/pulls/${{ github.event.number }}/files)
+          NUM_CHANGED_FILES=$(echo "$CHANGED_FILES" | jq -r '. | length')
+          echo "Number of changed files: $NUM_CHANGED_FILES"
+          echo "NUM_CHANGED_FILES=$NUM_CHANGED_FILES" >> "$GITHUB_OUTPUT"
+
+      - uses: srvaroa/labeler@v1.6.3
+        if: ${{ steps.count-files.outputs.NUM_CHANGED_FILES > 20 }}
+        with:
+          config_path: .github/auto-risky-modified-files-config.yml
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+

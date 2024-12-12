@@ -1,0 +1,6 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    api 'org.apache.httpcomponents:httpclient'
+}
+
+description = 'Backend Baseline Service API client'

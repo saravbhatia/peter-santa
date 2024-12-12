@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':ta-call-bot')
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'io.confluent:kafka-streams-avro-serde'
+    implementation 'com.tripactions:ta-kafka-avro-autoconfigure'
+}

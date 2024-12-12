@@ -1,0 +1,26 @@
+name: Call DB Changes Review action
+
+# Trigger the workflow on pull request events for opened, reopened, ready_for_review, review_requested, synchronize, and edited actions
+# and only for changes made to XML files.
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      - synchronize
+      - edited
+    paths:
+      - '**.xml'
+
+# Set permissions for the workflow
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  db_changes-reviewer:
+    name: Run DB Changes Reviewer
+    uses: tripactions/db-changes-reviewer/.github/workflows/db-changes-reviewer.yml@master
+    secrets:
+      GH_NAVAN_BOT: ${{ secrets.GH_NAVAN_BOT }}

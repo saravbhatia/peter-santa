@@ -1,0 +1,124 @@
+plugins {
+    id "org.sonarqube" version "4.4.1.3373"
+    id 'maven-publish'
+    id "com.diffplug.spotless" version "6.25.0"
+}
+
+project.ext {
+    lombok_version = '1.18.30'
+    nexus_username = project.hasProperty('NEXUS_USERNAME') ? "$NEXUS_USERNAME" : System.getenv('NEXUS_USERNAME')
+    nexus_password = project.hasProperty('NEXUS_PASSWORD') ? "$NEXUS_PASSWORD" : System.getenv('NEXUS_PASSWORD')
+    sonar_host_url = project.hasProperty('NEXUS_USERNAME') ? "http://sonarqube:9090" : "https://sonarcloud.io"
+    revision = project.hasProperty('revision') ? project.revision : ""
+}
+
+allprojects {
+    group = 'com.tripactions'
+    version = "1.0.15"
+}
+
+sonarqube {
+    properties {
+        property "sonar.host.url", project.sonar_host_url
+        property 'sonar.exclusions', "**/enums/*, **/pojo/*, **/model/**, **/entity/*, **/data/**, **/configuration/**, **/*Application.java, **/exception/*, **/config/*"
+        property 'sonar.test.exclusions', "**/*"
+    }
+}
+
+configure(subprojects.findAll {it.name != 'java-platform-plugin'}) {
+    apply plugin: 'java-library'
+
+    test {
+        useJUnitPlatform()
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenLocal()
+        maven {
+            url "https://nexus.tripactions.tools/repository/maven-public/"
+            credentials {
+                username project.nexus_username
+                password project.nexus_password
+            }
+        }
+        maven {
+            url "https://nexus.tripactions.tools/repository/maven-releases/"
+            credentials {
+                username project.nexus_username
+                password project.nexus_password
+            }
+        }
+        maven {
+            url "https://nexus.tripactions.tools/repository/maven-snapshots/"
+            credentials {
+                username project.nexus_username
+                password project.nexus_password
+            }
+        }
+        mavenCentral()
+    }
+
+    apply plugin: 'jacoco'
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required.set(true)
+        }
+    }
+
+    dependencies {
+        api platform(project(':java-platform-plugin'))
+        implementation 'org.apache.commons:commons-collections4'
+        compileOnly group: 'org.projectlombok', name: 'lombok'
+        annotationProcessor group: 'org.projectlombok', name: 'lombok', version: project.lombok_version
+        testCompileOnly group: 'org.projectlombok', name: 'lombok'
+        testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: project.lombok_version
+        testImplementation 'org.junit.jupiter:junit-jupiter-api'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.mockito:mockito-core'
+        testImplementation 'com.squareup.okhttp3:okhttp'
+        testImplementation 'com.squareup.okhttp3:mockwebserver'
+    }
+
+    if (Arrays.asList('ta-call-bot-client').contains(project.name)) {
+        apply plugin: 'maven-publish'
+        publishing {
+            publications {
+                maven(MavenPublication) {
+                    artifact jar
+                    pom.withXml {
+                        def dependenciesNode = asNode().appendNode('dependencies')
+                        configurations.implementation.allDependencies.each {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', it.group)
+                            dependencyNode.appendNode('artifactId', it.name)
+                            dependencyNode.appendNode('version', it.version)
+                        }
+                    }
+                }
+            }
+            repositories {
+                maven {
+                    name 'releases'
+                    url "https://nexus.tripactions.tools/repository/maven-releases/"
+                    credentials {
+                        username project.nexus_username
+                        password project.nexus_password
+                    }
+                }
+                maven {
+                    name 'snapshots'
+                    url "https://nexus.tripactions.tools/repository/maven-snapshots/"
+                    credentials {
+                        username project.nexus_username
+                        password project.nexus_password
+                    }
+                }
+            }
+        }
+    }
+}
