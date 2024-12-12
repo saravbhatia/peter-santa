@@ -84,7 +84,7 @@ configure(subprojects.findAll {it.name != 'java-platform-plugin'}) {
         testImplementation 'com.squareup.okhttp3:mockwebserver'
     }
 
-    if (Arrays.asList('baseline-be-svc-client').contains(project.name)) {
+    if (Arrays.asList('ta-call-bot-client').contains(project.name)) {
         apply plugin: 'maven-publish'
         publishing {
             publications {

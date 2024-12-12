@@ -1,6 +1,6 @@
 @Library('release') _
 
-String repository = 'baseline-be-svc'
+String repository = 'ta-call-bot'
 boolean enableNewVersioning = true
 boolean setNextVersion = true
 
@@ -8,11 +8,11 @@ Closure buildFunction = { ->
     microServiceBuildPipelineGradleInDocker(
         gradleDockerImage: "gradle:8.6-jdk21",
         repository: repository,
-        dockerfilesPath: ['baseline-be-svc':'./baseline-be-svc']
+        dockerfilesPath: ['ta-call-bot':'./ta-call-bot']
     )
 }
 
-Closure stagingDeployFunction = { -> taCDDeployToECSRelease('getFromEnv', 'baseline-be-svc', 'ta-pci-dev-fg-microservices') }
+Closure stagingDeployFunction = { -> taCDDeployToECSRelease('getFromEnv', 'ta-call-bot', 'ta-pci-dev-fg-microservices') }
 
 Closure stagingSmokeTestFunction = { -> echo 'PLACEHOLDER' }
 

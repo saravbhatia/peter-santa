@@ -21,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
 @ActiveProfiles("test")
 @TestPropertySource(properties = {
         "kafka.enabled=true",
-        "kafka.groupId=baseline-be-svc"
+        "kafka.groupId=ta-call-bot"
 })
 @Disabled // enable for local use
 /**

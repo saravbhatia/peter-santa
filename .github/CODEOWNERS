@@ -1,2 +1,2 @@
 # DB Changelog Group
-/baseline-be-svc/src/main/resources/db/changelog/ @tripactions/co-server-dbchangelog
+/ta-call-bot/src/main/resources/db/changelog/ @tripactions/co-server-dbchangelog
