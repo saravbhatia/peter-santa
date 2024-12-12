@@ -17,3 +17,6 @@ This is a tamplate for all backend services
 * <b>url</b> : ```https://ta-call-bot-prod.tripactions.site```
 * <b>ECS Cluster</b> : ```prod-microservices```
 * <b>Service Name</b> : ```ta-call-bot```
+
+## Technical Design Documentation:
+https://navancorp.atlassian.net/wiki/spaces/C/pages/4275109928/Tech+Design+Commerce+Call+Bot
