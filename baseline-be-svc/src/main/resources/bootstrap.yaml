@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: "baseline-be-svc"
+
+aws:
+  paramstore:
+    enabled: false

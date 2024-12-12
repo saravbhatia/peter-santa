@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      base-path: /api/actuator
+      exposure:
+        include: "health,info,metrics"
+  endpoint:
+    health:
+      show-details: ALWAYS
+  metrics:
+    tags:
+      application_name: ${spring.application.name}
+    web.server.request.autotime.enabled: true
+  newrelic.metrics.export.account-id: xxxxxx
+  newrelic.metrics.export.api-key: xxxxxx
+  newrelic.metrics.export.client-provider-type: insights-agent
+  newrelic.metrics.export.enabled: false
+  newrelic.metrics.export.step: PT30S
+  signalfx.metrics.export.access-token: xxxxxx
+  signalfx.metrics.export.enabled: false
+kafka:
+  enabled: true
+  schema-registry: "http://dev-schema-registry-b.tripactions.tools:8081,http://dev-schema-registry-a.tripactions.tools:8081"
+  bootstrap-servers: "http://b-1.dev-kafka.f94ast.c12.kafka.us-west-2.amazonaws.com:9092,http://b-2.dev-kafka.f94ast.c12.kafka.us-west-2.amazonaws.com:9092"
+  groupId: ta_baseline_service
+  listener-container-concurrency: 2
+  maxPollRecords: 100
+redis:
+  enabled: true
+spring:
+  data.redis.host: localhost
+  data.redis.port: 6379

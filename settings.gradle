@@ -1,0 +1,21 @@
+rootProject.name = 'baseline-be-svc'
+
+include 'baseline-be-svc'
+include 'baseline-be-svc-server'
+include 'baseline-be-svc-client'
+
+include 'spring-starter'
+include 'kafka'
+include 'redis'
+include 'mysql'
+
+include 'java-platform-plugin'
+
+project(':spring-starter').projectDir = "$rootDir/spring-starter" as File
+project(':baseline-be-svc').projectDir = "$rootDir/baseline-be-svc" as File
+project(':baseline-be-svc-client').projectDir = "$rootDir/baseline-be-svc-client" as File
+project(':kafka').projectDir = "$rootDir/infra/kafka" as File
+project(':redis').projectDir = "$rootDir/infra/redis" as File
+project(':mysql').projectDir = "$rootDir/infra/mysql" as File
+
+
