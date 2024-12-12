@@ -16,11 +16,11 @@ Closure stagingDeployFunction = { -> taCDDeployToECSRelease('getFromEnv', 'ta-ca
 
 Closure stagingSmokeTestFunction = { -> echo 'PLACEHOLDER' }
 
-Closure stagingPrimeDeployFunction = { -> echo 'PLACEHOLDER' }
+Closure stagingPrimeDeployFunction = { -> taCDDeployToECSRelease("getFromEnv", "ta-call-bot", "staging-prime-cluster", "us-west-2") }
 
-Closure prodPDXDeployFunction = { ->  echo 'PLACEHOLDER' }
+//Closure prodPDXDeployFunction = { -> taCDDeployToECSRelease("getFromEnv", "ta-call-bot", "prod-microservices", "us-west-2") }
 
-Closure prodFRADeployFunction = { -> echo 'PLACEHOLDER' }
+//Closure prodFRADeployFunction = { -> taCDDeployToECSRelease("getFromEnv", "ta-call-bot", "prod-microservices", "eu-central-1") }
 
 Closure productionSmokeTestFunction = { -> echo 'PLACEHOLDER' }
 
@@ -29,8 +29,8 @@ microServicePipelineMain(
     buildFunction: buildFunction,
     stagingDeployFunction: stagingDeployFunction,
     stagingPrimeDeployFunction: stagingPrimeDeployFunction,
-    prodPDXDeployFunction: prodPDXDeployFunction,
-    prodFRADeployFunction: prodFRADeployFunction,
+    //prodPDXDeployFunction: prodPDXDeployFunction,
+    //prodFRADeployFunction: prodFRADeployFunction,
     stagingSmokeTestFunction: stagingSmokeTestFunction,
     productionSmokeTestFunction: productionSmokeTestFunction,
     enableNewVersioning: enableNewVersioning,
