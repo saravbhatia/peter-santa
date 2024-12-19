@@ -1,16 +1,5 @@
 import { WebSocket } from 'ws';
-
-let connectedClients: WebSocket[] = [];
-
-export function addClient(ws: WebSocket) {
-    connectedClients.push(ws);
-    console.log(`New client connected. Total clients: ${connectedClients.length}`);
-    
-    ws.on('close', () => {
-        connectedClients = connectedClients.filter(client => client !== ws);
-        console.log(`Client disconnected. Remaining clients: ${connectedClients.length}`);
-    });
-}
+import { addClient, broadcastMessage } from '@/utils/websocket';
 
 // WebSocket handler
 export async function SOCKET(client: WebSocket) {
@@ -19,7 +8,6 @@ export async function SOCKET(client: WebSocket) {
 
     client.on('close', () => {
         console.log('Status WebSocket connection closed');
-        connectedClients = connectedClients.filter(c => c !== client);
     });
 }
 
@@ -38,14 +26,7 @@ export async function POST(request: Request) {
         status: callStatus
     });
 
-    let sentCount = 0;
-    connectedClients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(message);
-            sentCount++;
-        }
-    });
-
+    const sentCount = broadcastMessage(message);
     console.log(`Broadcasted status to ${sentCount} clients`);
     return new Response('OK');
 }
