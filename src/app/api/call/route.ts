@@ -8,57 +8,29 @@ const {
 } = process.env;
 
 const DOMAIN = rawDomain?.replace(/(^\w+:|^)\/\//, '').replace(/\/+$/, '') ?? ''; // Clean protocols and slashes
-const outboundTwiML = `<?xml version="1.0" encoding="UTF-8"?><Response><Connect><Stream url="wss://${DOMAIN}/api/call-stream" /></Connect></Response>`;
+const outboundTwiML = `<?xml version="1.0" encoding="UTF-8"?><Response><Connect><Stream url="wss://${DOMAIN}/api/call-stream"><Parameter name="mode" value="duplex" /></Stream></Connect></Response>`;
 
 async function isNumberAllowed(client: Twilio, to: string) {
-    try {
-        // Uncomment these lines to test numbers. Only add numbers you have permission to call
-        const consentMap = {
-            "+14088180452": true,
-        } as Record<string, boolean>;
-        if (consentMap[to]) return true;
-
-        // Check if the number is a Twilio phone number in the account, for example, when making a call to the Twilio Dev Phone
-        const incomingNumbers = await client.incomingPhoneNumbers.list({
-            phoneNumber: to,
-        });
-        if (incomingNumbers.length > 0) {
-            return true;
-        }
-
-        // Check if the number is a verified outgoing caller ID. https://www.twilio.com/docs/voice/api/outgoing-caller-ids
-        const outgoingCallerIds = await client.outgoingCallerIds.list({
-            phoneNumber: to,
-        });
-        if (outgoingCallerIds.length > 0) {
-            return true;
-        }
-
-        return false;
-    } catch (error) {
-        console.error("Error checking phone number:", error);
-        return false;
-    }
+    // Allow all phone numbers
+    return true;
 }
 
 async function makeCall(client: Twilio, to: string) {
     try {
-        const isAllowed = await isNumberAllowed(client, to);
-        if (!isAllowed) {
-            console.warn(
-                `The number ${to} is not recognized as a valid outgoing number or caller ID.`
-            );
-            process.exit(1);
-        }
-
         const call = await client.calls.create({
             from: PHONE_NUMBER_FROM!,
             to,
             twiml: outboundTwiML,
+            statusCallback: `https://${DOMAIN}/api/call-status`,
+            statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
+            statusCallbackMethod: 'POST',
         });
+        
         console.log(`Call started with SID: ${call.sid}`);
+        return call;
     } catch (error) {
         console.error("Error making call:", error);
+        throw error;
     }
 }
 
@@ -66,8 +38,23 @@ export async function POST(request: Request) {
     if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !PHONE_NUMBER_FROM || !rawDomain) {
         return Response.json({ error: "Server is not configured" }, { status: 500 });
     }
-    const client = new Twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
-    const { to } = await request.json();
-    await makeCall(client, to);
-    return Response.json({ message: "Call started" });
+
+    try {
+        const client = new Twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+        const { to } = await request.json();
+        
+        if (!to) {
+            return Response.json({ error: "Phone number is required" }, { status: 400 });
+        }
+
+        const call = await makeCall(client, to);
+        return Response.json({ message: "Call started", callSid: call.sid });
+    } catch (error: any) {
+        console.error("Error in POST handler:", error);
+        return Response.json({ 
+            error: error.message || "Failed to start call" 
+        }, { 
+            status: error.status || 500 
+        });
+    }
 }
