@@ -1,6 +1,6 @@
 import { WebSocket } from "ws";
 import fs from "fs";
-import { addClient } from "../call-status/route";
+import { addClient } from "@/utils/websocket";
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const VOICE = "ash";
