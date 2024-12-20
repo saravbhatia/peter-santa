@@ -55,6 +55,7 @@ export default function Home() {
                                     console.log('Call ended, resetting state');
                                     setCallStatus('idle');
                                     setCurrentCallSid(null);
+                                    window.location.reload();
                                     break;
                             }
                         }
